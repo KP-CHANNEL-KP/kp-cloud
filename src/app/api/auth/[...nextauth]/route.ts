@@ -1,17 +1,24 @@
-export const runtime = 'edge';
-
-import NextAuth from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
-
-const handler = NextAuth({
-  providers: [
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID ?? "",
-      clientSecret: process.env.GITHUB_SECRET ?? "",
-    }),
-  ],
-  secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: "jwt" },
-});
-
-export { handler as GET, handler as POST };
+{
+  "name": "kp-cloud",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "15.1.0",
+    "next-auth": "^4.24.11",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.16",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}
