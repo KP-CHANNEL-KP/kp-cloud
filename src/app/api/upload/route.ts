@@ -8,14 +8,15 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File;
 
     if (!file) {
-      return NextResponse.json(
-        { error: "File not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No file" }, { status: 400 });
     }
 
-    const BOT_TOKEN = process.env.TG_BOT_TOKEN!;
-    const CHAT_ID = process.env.TG_CHAT_ID!;
+    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+    const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+    if (!BOT_TOKEN || !CHAT_ID) {
+      return NextResponse.json({ error: "ENV missing" }, { status: 500 });
+    }
 
     const tgForm = new FormData();
     tgForm.append("chat_id", CHAT_ID);
@@ -30,26 +31,21 @@ export async function POST(request: Request) {
     );
 
     const data = await res.json();
+    console.log("Telegram:", data);
 
     if (!data.ok) {
       return NextResponse.json(
-        { error: "Telegram upload failed" },
+        { error: data.description },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Uploaded to Telegram",
-      fileName: file.name,
-      telegramMessageId: data.result.message_id,
-    });
+    return NextResponse.json({ success: true });
 
-  } catch (error) {
-    console.error("Upload error:", error);
-
+  } catch (err) {
+    console.error("Upload error:", err);
     return NextResponse.json(
-      { error: "Upload failed" },
+      { error: "Server error" },
       { status: 500 }
     );
   }
