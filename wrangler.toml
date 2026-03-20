@@ -1,13 +1,5 @@
 name = "kp-cloud"
 pages_build_output_dir = ".vercel/output/static"
-
-[vars]
-# Dashboard ထဲမှာ variable တွေ ထည့်ပြီးသားဆိုရင် ဒီမှာ ထပ်ထည့်စရာမလိုပါဘူး
-# ဒါပေမဲ့ ဒီမှာ တစ်ခါတည်း သတ်မှတ်ထားရင် ပိုသေချာပါတယ်
-# TG_BOT_TOKEN = "သင့်ရဲ့_token"
-# TG_CHAT_ID = "သင့်ရဲ့_id"
-
-[compatibility_flags]
 compatibility_flags = [ "nodejs_compat" ]
 
 [build]
