@@ -1,4 +1,4 @@
-export const runtime = 'edge'; // Cloudflare Pages အတွက် ဒါက မဖြစ်မနေ ပါရပါမယ်
+export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
 
@@ -9,25 +9,47 @@ export async function POST(request: Request) {
 
     if (!file) {
       return NextResponse.json(
-        { error: "ဖိုင်ရှာမတွေ့ပါဘူး ဆရာကြီး" },
+        { error: "File not found" },
         { status: 400 }
       );
     }
 
-    // ဒီနေရာမှာ Cloudflare R2 ဒါမှမဟုတ် တခြား Storage ဆီ ပို့မယ့် logic ထည့်ရပါမယ်
-    // ဥပမာ - အစမ်းအနေနဲ့ ဖိုင်အကြောင်းအရာကိုပဲ ပြန်ပြပေးလိုက်ပါမယ်
-    console.log(`Uploading: ${file.name}, Size: ${file.size}`);
+    const BOT_TOKEN = process.env.TG_BOT_TOKEN!;
+    const CHAT_ID = process.env.TG_CHAT_ID!;
 
-    return NextResponse.json({ 
-      success: true, 
-      message: "File upload လုပ်လို့ ရပါပြီ",
-      fileName: file.name 
+    const tgForm = new FormData();
+    tgForm.append("chat_id", CHAT_ID);
+    tgForm.append("document", file);
+
+    const res = await fetch(
+      `https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`,
+      {
+        method: "POST",
+        body: tgForm,
+      }
+    );
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      return NextResponse.json(
+        { error: "Telegram upload failed" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Uploaded to Telegram",
+      fileName: file.name,
+      telegramMessageId: data.result.message_id,
     });
 
   } catch (error) {
     console.error("Upload error:", error);
+
     return NextResponse.json(
-      { error: "Upload လုပ်ရတာ အဆင်မပြေပါဘူး" },
+      { error: "Upload failed" },
       { status: 500 }
     );
   }
