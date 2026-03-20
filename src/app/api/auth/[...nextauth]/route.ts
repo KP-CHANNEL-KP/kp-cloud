@@ -6,4 +6,4 @@ const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
 
 // Cloudflare Pages (Edge) မှာ run ဖို့ runtime ကို သတ်မှတ်ပေးရပါမယ်
-export const runtime = "edge";
+//export const runtime = "edge";
