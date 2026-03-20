@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
+export const runtime = 'edge'; // Cloudflare အတွက် ဒါက မရှိမဖြစ်ပါ
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
