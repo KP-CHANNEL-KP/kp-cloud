@@ -1,11 +1,16 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 
-export const runtime = "edge";
+const authOptions = {
+  providers: [
+    GitHub({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+    }),
+  ],
+};
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [GitHub],
-  // ကျန်တဲ့ configurations တွေ ဒီမှာထည့်ပါ
-});
+const handler = NextAuth(authOptions);
 
-export const { GET, POST } = handlers;
+export const GET = handler;
+export const POST = handler;
