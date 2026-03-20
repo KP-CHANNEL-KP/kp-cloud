@@ -1,24 +1,9 @@
-{
-  "name": "kp-cloud",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "15.1.0",
-    "next-auth": "^4.24.11",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.16",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "typescript": "^5"
-  }
-}
+import NextAuth from "next-auth";
+import { authOptions } from "@/lib/auth"; // auth configuration ကို lib ထဲမှာ ခွဲထားတာ ပိုကောင်းပါတယ်
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
+
+// Cloudflare Pages (Edge) မှာ run ဖို့ runtime ကို သတ်မှတ်ပေးရပါမယ်
+export const runtime = "edge";
