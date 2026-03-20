@@ -1,26 +1,17 @@
-export const runtime = 'edge'; // Cloudflare Pages အတွက် ဒါက အရေးကြီးဆုံးပါ
+export const runtime = 'edge';
 
 import NextAuth from "next-auth";
-import EmailProvider from "next-auth/providers/email";
+import GitHubProvider from "next-auth/providers/github";
 
 const handler = NextAuth({
   providers: [
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: Number(process.env.EMAIL_SERVER_PORT),
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
-        },
-      },
-      from: process.env.EMAIL_FROM,
+    // လောလောဆယ် Build အောင်အောင် GitHub ဒါမှမဟုတ် တခြား provider တစ်ခုခုနဲ့ စမ်းထားပါ
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID || "",
+      clientSecret: process.env.GITHUB_SECRET || "",
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: '/login', // ဆရာကြီးဆောက်ထားတဲ့ Custom Login Page ရှိရင် ဒါကို သုံးပါ
-  },
   callbacks: {
     async session({ session, token }) {
       return session;
