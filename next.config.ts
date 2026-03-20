@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
+  output: 'export', // ဒါလေး ထည့်ပေးရပါမယ်
+  images: {
+    unoptimized: true, // Static site အတွက် ဒါက လိုအပ်ပါတယ်
+  },
 };
 
 export default nextConfig;
