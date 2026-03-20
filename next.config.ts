@@ -1,9 +1,10 @@
+// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export', // ဒါလေး ထည့်ပေးရပါမယ်
+  // output: 'export', <-- ဒီစာကြောင်းကို ဖျက်ပါ သို့မဟုတ် comment ပိတ်ပါ
   images: {
-    unoptimized: true, // Static site အတွက် ဒါက လိုအပ်ပါတယ်
+    unoptimized: true,
   },
 };
 
