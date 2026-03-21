@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { 
   HardDrive, Image as ImageIcon, Film, FileText, Upload, 
   Loader2, Search, MoreVertical, Plus, 
-  LayoutGrid, List, Bell, Settings, CheckCircle2, AlertCircle
+  LayoutGrid, List, Bell, Settings, CheckCircle2, AlertCircle,
+  Music, StickyNote // 👈 Icon အသစ်များ ထည့်သွင်းထားသည်
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,24 +25,24 @@ export default function Dashboard() {
     if (!file) return;
 
     setUploading(true);
-    // 🔔 Loading ပြဖို့အတွက် Fake delay တင်ပေးထားတာပါ (တကယ်အလုပ်လုပ်ရင် ဖြုတ်ရပါမယ်)
+    // Loading animation ကို မြင်ရအောင် fake delay ထည့်ထားခြင်း (လိုအပ်ပါက ဖြုတ်နိုင်သည်)
     await new Promise(resolve => setTimeout(resolve, 3000)); 
 
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      // 🚀 ဆရာကြီးရဲ့ Telegram Upload API နဲ့ ချိတ်ဖို့နေရာပါ
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
       const data = await response.json();
       
-      if (data.ok) {
+      // route.ts logic နဲ့ ကိုက်ညီအောင် data.success ကို စစ်ထားပါသည်
+      if (data.success) {
         triggerToast("ဖိုင်တင်ခြင်း အောင်မြင်သည်!", 'success');
       } else {
-        triggerToast(data.description || "တင်လို့မရပါ", 'error');
+        triggerToast(data.error || "တင်လို့မရပါ", 'error');
       }
     } catch (error) {
       triggerToast("Server နှင့် ချိတ်ဆက်၍မရပါ", 'error');
@@ -50,7 +51,6 @@ export default function Dashboard() {
     }
   };
 
-  // Dummy file data to show cards
   const dummyFiles = [1, 2, 3, 4, 5, 6, 7, 8].map(i => ({
     id: i,
     name: `Corporate_Agreement_V${i}.pdf`,
@@ -89,6 +89,11 @@ export default function Dashboard() {
           <NavItem icon={<HardDrive size={18}/>} label="All Files" active />
           <NavItem icon={<ImageIcon size={18}/>} label="Photos" />
           <NavItem icon={<Film size={18}/>} label="Videos" />
+          
+          {/* 👇 အသစ်ထည့်ထားသော Audio နှင့် Notes item များ */}
+          <NavItem icon={<Music size={18}/>} label="Audio" />
+          <NavItem icon={<StickyNote size={18}/>} label="Notes" />
+          
           <NavItem icon={<FileText size={18}/>} label="Corporate Docs" />
           <div className="my-6 border-t border-white/5 mx-2" />
           <NavItem icon={<Settings size={18}/>} label="Settings" />
@@ -109,7 +114,6 @@ export default function Dashboard() {
           </div>
           
           <div className="flex items-center gap-4">
-            {/* 📤 Upload Button & Loading State */}
             <motion.label 
               whileHover={uploading ? {} : { scale: 1.02, y: -2 }}
               whileTap={uploading ? {} : { scale: 0.98 }}
@@ -120,7 +124,6 @@ export default function Dashboard() {
               }`}
             >
               {uploading ? (
-                // 🌀 Beautiful Spinner for button
                 <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
                   <Loader2 size={20}/>
                 </motion.div>
@@ -140,7 +143,6 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
-            {/* 🆕 Place a 'Skeleton' card during upload */}
             <AnimatePresence>
               {uploading && (
                 <motion.div 
@@ -150,7 +152,6 @@ export default function Dashboard() {
                   transition={{ type: "spring", stiffness: 300, damping: 25 }}
                   className="bg-white/[0.015] p-6 rounded-[2.5rem] border-2 border-dashed border-blue-500/20 flex flex-col items-center justify-center h-[300px]"
                 >
-                  {/* 🌌 Modern Pulse Animation */}
                   <div className="relative mb-6">
                     <motion.div 
                       animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
@@ -164,7 +165,6 @@ export default function Dashboard() {
               )}
             </AnimatePresence>
 
-            {/* Existing Dummy Cards */}
             {dummyFiles.map((file) => (
               <motion.div 
                 key={file.id} 
