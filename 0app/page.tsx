@@ -11,14 +11,14 @@ export default function Home() {
         {/* Buttons */}
         <div className="flex flex-col gap-4">
           <a
-            href="api/login"
+            href="/login"
             className="bg-purple-600 hover:bg-purple-700 transition p-3 rounded-lg"
           >
             Login
           </a>
 
           <a
-            href="api/register"
+            href="/register"
             className="border border-purple-500 hover:bg-purple-600/20 transition p-3 rounded-lg"
           >
             Register
