@@ -39,9 +39,8 @@ export default function RegisterPage() {
         return;
       }
 
-      // အောင်မြင်ရင် login page ကို ပို့ (သို့မဟုတ် auto login လုပ်ချင်ရင် signIn ခေါ်လို့ရတယ်)
       router.push("/login?registered=true");
-    } catch (err) {
+    } catch {
       setError("တစ်ခုခု မမှန်ကန်ပါ။ ထပ်မံကြိုးစားပါ။");
     } finally {
       setLoading(false);
@@ -49,90 +48,88 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950/80 to-purple-950/70 px-4">
-      <div className="w-full max-w-md p-8 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[#070b1a] text-white">
+
+      {/* Background glow */}
+      <div className="absolute w-[500px] h-[500px] bg-purple-600/20 blur-3xl rounded-full top-[-100px] left-[-100px]" />
+      <div className="absolute w-[400px] h-[400px] bg-indigo-600/20 blur-3xl rounded-full bottom-[-100px] right-[-100px]" />
+
+      {/* Card */}
+      <div className="relative w-full max-w-md p-8 rounded-2xl bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_0_50px_rgba(99,102,241,0.2)]">
+
+        {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">KP Cloud</h1>
-          <p className="text-slate-400 mt-2">စီးပွားရေးအတွက် လုံခြုံသော သိုလှောင်မှု</p>
+          <h1 className="text-3xl font-bold tracking-tight">KP Cloud 🚀</h1>
+          <p className="text-slate-400 mt-2 text-sm">
+            Secure business storage platform
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-              အမည်
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 focus:bg-white/10 transition"
-              placeholder="Aung Paing Soe"
-            />
-          </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-              အီးမေးလ်
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 focus:bg-white/10 transition"
-              placeholder="example@company.com"
-            />
-          </div>
+          {/* Input component style */}
+          {[{
+            id: "name",
+            label: "အမည်",
+            value: name,
+            set: setName,
+            type: "text",
+            placeholder: "Aung Paing Soe"
+          },{
+            id: "email",
+            label: "အီးမေးလ်",
+            value: email,
+            set: setEmail,
+            type: "email",
+            placeholder: "example@company.com"
+          },{
+            id: "password",
+            label: "စကားဝှက်",
+            value: password,
+            set: setPassword,
+            type: "password",
+            placeholder: "အနည်းဆုံး ၈ လုံး"
+          },{
+            id: "confirm",
+            label: "စကားဝှက် အတည်ပြုရန်",
+            value: confirmPassword,
+            set: setConfirmPassword,
+            type: "password",
+            placeholder: "ထပ်မံရိုက်ထည့်ပါ"
+          }].map((field) => (
+            <div key={field.id}>
+              <label className="block text-sm mb-1 text-slate-300">
+                {field.label}
+              </label>
+              <input
+                type={field.type}
+                value={field.value}
+                onChange={(e) => field.set(e.target.value)}
+                required
+                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-indigo-500 focus:bg-white/10 outline-none transition"
+                placeholder={field.placeholder}
+              />
+            </div>
+          ))}
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
-              စကားဝှက်
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 focus:bg-white/10 transition"
-              placeholder="အနည်းဆုံး ၈ လုံး"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-300 mb-2">
-              စကားဝှက် အတည်ပြုရန်
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 focus:bg-white/10 transition"
-              placeholder="ထပ်မံရိုက်ထည့်ပါ"
-            />
-          </div>
-
+          {/* Error */}
           {error && (
             <div className="text-rose-400 text-sm text-center bg-rose-950/30 border border-rose-500/30 p-3 rounded-lg">
               {error}
             </div>
           )}
 
+          {/* Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 rounded-lg font-medium bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-[1.02] active:scale-100 transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <>
-                <Loader2 className="h-5 w-5 animate-spin" />
-                အကောင့်ဖွင့်နေသည်...
+                <Loader2 className="animate-spin w-5 h-5" />
+                Loading...
               </>
             ) : (
               "အကောင့်ဖွင့်မည်"
@@ -140,12 +137,13 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-slate-400">
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-slate-400">
           အကောင့်ရှိပြီးသားလား?{" "}
-          <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">
+          <Link href="/login" className="text-indigo-400 hover:underline">
             ဝင်ရောက်ရန်
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   );
