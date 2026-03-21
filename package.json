@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "pages:build": "npx @cloudflare/next-on-pages",
     "lint": "next lint"
   },
