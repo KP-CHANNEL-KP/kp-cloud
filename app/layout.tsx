@@ -1,6 +1,6 @@
 // app/layout.tsx  ← ဒီ file ကို အသစ်ဖန်တီးပါ
 import type { Metadata } from "next";
-import "./globals.css";  // မင်း global CSS ရှိရင် import လုပ်
+//import "./globals.css";  // မင်း global CSS ရှိရင် import လုပ်
 
 export const metadata: Metadata = {
   title: "KP Cloud - Business Storage",
