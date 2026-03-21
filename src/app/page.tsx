@@ -39,7 +39,7 @@ export default function Dashboard() {
       const data = await response.json();
       
       if (data.ok) {
-        triggerToast("Telegram ဆီသို့ ဖိုင်တင်ခြင်း အောင်မြင်သည်!", 'success');
+        triggerToast("ဖိုင်တင်ခြင်း အောင်မြင်သည်!", 'success');
       } else {
         triggerToast(data.description || "တင်လို့မရပါ", 'error');
       }
