@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import {
   HardDrive, Image as ImageIcon, Film, FileText, Upload,
   Loader2, Search, MoreVertical, LayoutGrid, Bell, Settings,
-  CheckCircle2, AlertCircle, Download, Trash2, Share2
+  CheckCircle2, AlertCircle, Download, Trash2, Share2,
+  Music, FileMusic, // Audio အတွက် သင့်တော်တဲ့ icon တွေ
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -29,7 +30,7 @@ export default function Dashboard() {
     if (!file) return;
 
     setUploading(true);
-    await new Promise(resolve => setTimeout(resolve, 2800)); // fake delay
+    await new Promise(resolve => setTimeout(resolve, 2800));
 
     const formData = new FormData();
     formData.append('file', file);
@@ -50,7 +51,7 @@ export default function Dashboard() {
     }
   };
 
-  // Dummy files
+  // Dummy files (နောက်မှ real data နဲ့ အစားထိုး)
   const dummyFiles = [1, 2, 3, 4, 5, 6, 7, 8].map(i => ({
     id: i,
     name: `Corporate_Agreement_V${i}.pdf`,
@@ -62,10 +63,7 @@ export default function Dashboard() {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.3
-      }
+      transition: { staggerChildren: 0.08, delayChildren: 0.3 }
     }
   };
 
@@ -105,7 +103,7 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* Sidebar - ပိုမိုကောင်းတဲ့ glass */}
+      {/* Sidebar */}
       <motion.aside
         initial={{ x: -320 }}
         animate={{ x: 0 }}
@@ -130,6 +128,8 @@ export default function Dashboard() {
             { icon: <ImageIcon size={20} />, label: "Photos" },
             { icon: <Film size={20} />, label: "Videos" },
             { icon: <FileText size={20} />, label: "Corporate Docs" },
+            { icon: <FileMusic size={20} />, label: "Audio" },     // ← Audio ထည့်ပြီး
+            { icon: <FileText size={20} />, label: "Notes" },      // ← Notes ထည့်ပြီး (လိုချင်ရင် StickyNote ပြောင်းလို့ရတယ်)
           ].map(item => (
             <NavItem
               key={item.label}
@@ -182,7 +182,7 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* Upload Zone */}
+        {/* Upload Zone - Audio နဲ့ Notes ပါအောင် စာသားချိန်ညှိ */}
         <motion.label
           whileHover={{ scale: 1.008 }}
           className={`group relative block p-14 lg:p-16 mb-14 rounded-3xl border-2 border-dashed transition-all duration-500 cursor-pointer backdrop-blur-xl
@@ -216,7 +216,7 @@ export default function Dashboard() {
           </div>
         </motion.label>
 
-        {/* Files Grid */}
+        {/* Files Grid - ကျန်တဲ့ အပိုင်း အရင်အတိုင်း */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           variants={container}
@@ -267,7 +267,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Dropdown */}
               <AnimatePresence>
                 {openMenuId === file.id && (
                   <motion.div
@@ -314,11 +313,11 @@ function NavItem({
       onClick={onClick}
       className={`group relative w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-base font-medium transition-all overflow-hidden
         ${active
-          ? 'bg-gradient-to-r from-indigo-600/50 to-purple-600/40 text-white shadow-lg'
+          ? 'bg-gradient-to-r from-indigo-600/50 to-purple-600/60 text-white shadow-lg'  // purple ပိုပေါ်အောင် ချိန်ညှိ
           : 'text-slate-300 hover:text-white hover:bg-white/8'
         }`}
     >
-      <div className={`p-3 rounded-xl transition-colors ${active ? 'bg-indigo-500/30' : 'bg-white/5 group-hover:bg-white/12'}`}>
+      <div className={`p-3 rounded-xl transition-colors ${active ? 'bg-indigo-500/40' : 'bg-white/5 group-hover:bg-white/12'}`}>
         {icon}
       </div>
       <span>{label}</span>
@@ -326,11 +325,10 @@ function NavItem({
       {active && (
         <motion.div
           layoutId="activeIndicator"
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-gradient-to-b from-indigo-400 to-purple-400 rounded-r-full"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-gradient-to-b from-indigo-400 to-purple-500 rounded-r-full"
         />
       )}
 
-      {/* Shine */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
     </motion.button>
   );
