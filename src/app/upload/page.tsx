@@ -32,9 +32,8 @@ export default function UploadPage() {
       <input
         type="file"
         onChange={(e) => {
-          if (e.target.files) {
-            setFile(e.target.files[0]);
-          }
+          const selectedFile = e.target.files?.[0] ?? null;
+setFile(selectedFile);
         }}
       />
 

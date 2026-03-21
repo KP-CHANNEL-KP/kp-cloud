@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    // အခြေခံ အဆင့်မြင့်တဲ့ target နဲ့ lib တွေ
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+
+    // Next.js အတွက် မဖြစ်မနေ လိုအပ်တဲ့ အချက်များ
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -22,21 +21,39 @@
         "name": "next"
       }
     ],
+
+    // Path alias ကို ပိုပြည့်စုံအောင် ထည့်ပေး (မင်း လက်ရှိ ရှိပြီးသား)
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
+      "@/*": ["./src/*"],
+      // လိုအပ်ရင် ထပ်ထည့်လို့ ရတယ် (optional)
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/app/*": ["./src/app/*"]
+    },
+
+    // အပိုဆောင်း အကြံပြုချက်များ (ပိုကောင်းအောင်)
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true
   },
+
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "**/*.cts"          // လိုအပ်ရင် ထည့်ထားပါ
   ],
+
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next",
+    "out",
+    "dist",
+    "public"              // မလိုအပ်ရင် ထည့်ထားလို့ ရတယ်
   ]
 }
