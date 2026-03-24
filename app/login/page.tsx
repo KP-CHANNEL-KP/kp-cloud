@@ -6,18 +6,21 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Mail, Lock, Rocket } from "lucide-react";
 
-// ✅ Cloudflare Pages Build Error (Prerender Error) ကို ကာကွယ်ရန်
+// ✅ Cloudflare Pages Build အချိန်မှာ Static ထုတ်တာကို လုံးဝပိတ်မယ်
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { data: session, status } = useSession(); // Safe destructing
+  
+  // ⚠️ useSession ကို direct destructure မလုပ်ဘဲ safe ဖြစ်အောင် ခေါ်ပါမယ်
+  const sessionData = useSession();
+  const status = sessionData?.status;
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ အကယ်၍ Login ဝင်ပြီးသားဆိုရင် Dashboard ကို အမြန်ဆုံး ပို့ပေးမယ်
   useEffect(() => {
     if (status === "authenticated") {
       router.replace("/dashboard");
@@ -40,7 +43,6 @@ export default function LoginPage() {
         setError("အီးမေးလ် သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်");
         setLoading(false);
       } else if (result?.ok) {
-        // ✅ Next.js Router အစား Window Location သုံးတာက Session State ကို ချက်ချင်း Refresh ဖြစ်စေလို့ ပိုအပိုင်ပါသည်
         window.location.href = "/dashboard";
       }
     } catch (err) {
@@ -49,30 +51,28 @@ export default function LoginPage() {
     }
   };
 
-  // ✅ Build အချိန်မှာ Error မတက်အောင်နဲ့ UX ကောင်းအောင် Loading state ကို ဦးစားပေးပြမယ်
-  if (status === "loading" || status === "authenticated") {
+  // ✅ status undefined ဖြစ်နေရင် (Build အချိန်) loading ပဲ ပြထားမယ်
+  if (!status || status === "loading" || status === "authenticated") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#070b1a] gap-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#070b1a] gap-4 text-white">
         <Loader2 className="animate-spin text-indigo-500 w-12 h-12" />
-        <p className="text-slate-400 font-medium animate-pulse">Checking Session...</p>
+        <p className="text-slate-400 font-medium animate-pulse">Initializing KP Cloud...</p>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[#020617] text-white">
-      {/* 🌌 High-end Glow Backgrounds */}
       <div className="absolute w-[600px] h-[600px] bg-blue-600/10 blur-[120px] rounded-full -top-48 -left-48" />
       <div className="absolute w-[500px] h-[500px] bg-indigo-600/10 blur-[100px] rounded-full -bottom-48 -right-48" />
 
-      {/* 💳 Login Card */}
       <div className="relative w-full max-w-md p-10 rounded-[2.5rem] bg-white/[0.02] backdrop-blur-3xl border border-white/10 shadow-2xl">
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
             <Rocket className="text-white w-8 h-8" />
           </div>
-          <h1 className="text-4xl font-black tracking-tighter bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
-            KP CLOUD
+          <h1 className="text-4xl font-black tracking-tighter bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent uppercase">
+            KP Cloud
           </h1>
           <p className="text-slate-500 mt-2 text-sm font-medium uppercase tracking-[0.2em]">Secure Access</p>
         </div>
@@ -109,7 +109,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="flex items-center gap-3 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold animate-shake">
+            <div className="flex items-center gap-3 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold">
               <div className="w-1 h-1 rounded-full bg-rose-500" />
               {error}
             </div>
