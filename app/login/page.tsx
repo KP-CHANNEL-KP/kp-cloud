@@ -1,25 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react"; // useSession ထည့်လိုက်ပါ
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail, Lock, Rocket } from "lucide-react";
 
+// ✅ Cloudflare Pages Build Error (Prerender Error) ကို ကာကွယ်ရန်
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { status } = useSession();
+  const { data: session, status } = useSession(); // Safe destructing
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ အကယ်၍ Login ဝင်ပြီးသားဆိုရင် Dashboard ကို အော်တိုပို့ပေးမယ်
+  // ✅ အကယ်၍ Login ဝင်ပြီးသားဆိုရင် Dashboard ကို အမြန်ဆုံး ပို့ပေးမယ်
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     }
   }, [status, router]);
 
@@ -30,75 +31,86 @@ export default function LoginPage() {
 
     try {
       const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false, // UI မှာ error ပြချင်လို့ false ထားတာ မှန်ပါတယ်
+        email: email.trim(),
+        password: password,
+        redirect: false,
       });
 
       if (result?.error) {
-        setError("အီးမေးလ် သို့မဟုတ် စကားဝှက် မမှန်ကန်ပါ");
+        setError("အီးမေးလ် သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်");
         setLoading(false);
-        return;
-      }
-
-      if (result?.ok) {
-        // ✅ router.push က တခါတလေ cache ကြောင့် မသွားရင် window.location သုံးတာ ပိုထိရောက်ပါတယ်
+      } else if (result?.ok) {
+        // ✅ Next.js Router အစား Window Location သုံးတာက Session State ကို ချက်ချင်း Refresh ဖြစ်စေလို့ ပိုအပိုင်ပါသည်
         window.location.href = "/dashboard";
       }
     } catch (err) {
-      setError("တစ်ခုခု မမှန်ကန်ပါ။ ထပ်မံကြိုးစားပါ။");
+      setError("Server ချိတ်ဆက်မှု အခက်အခဲရှိနေပါသည်။");
       setLoading(false);
     }
   };
 
-  // Loading ဖြစ်နေချိန်မှာ ခဏစောင့်ခိုင်းမယ်
-  if (status === "loading") {
+  // ✅ Build အချိန်မှာ Error မတက်အောင်နဲ့ UX ကောင်းအောင် Loading state ကို ဦးစားပေးပြမယ်
+  if (status === "loading" || status === "authenticated") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#070b1a]">
-        <Loader2 className="animate-spin text-indigo-500 w-10 h-10" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#070b1a] gap-4">
+        <Loader2 className="animate-spin text-indigo-500 w-12 h-12" />
+        <p className="text-slate-400 font-medium animate-pulse">Checking Session...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[#070b1a] text-white">
-      {/* Glow background */}
-      <div className="absolute w-[500px] h-[500px] bg-indigo-600/20 blur-3xl rounded-full top-[-120px] left-[-120px]" />
-      <div className="absolute w-[400px] h-[400px] bg-purple-600/20 blur-3xl rounded-full bottom-[-120px] right-[-120px]" />
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[#020617] text-white">
+      {/* 🌌 High-end Glow Backgrounds */}
+      <div className="absolute w-[600px] h-[600px] bg-blue-600/10 blur-[120px] rounded-full -top-48 -left-48" />
+      <div className="absolute w-[500px] h-[500px] bg-indigo-600/10 blur-[100px] rounded-full -bottom-48 -right-48" />
 
-      <div className="relative w-full max-w-md p-8 rounded-2xl bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_0_60px_rgba(99,102,241,0.2)]">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">KP Cloud 🚀</h1>
-          <p className="text-slate-400 mt-2 text-sm">သင့်အကောင့်သို့ ဝင်ရောက်ပါ</p>
+      {/* 💳 Login Card */}
+      <div className="relative w-full max-w-md p-10 rounded-[2.5rem] bg-white/[0.02] backdrop-blur-3xl border border-white/10 shadow-2xl">
+        <div className="text-center mb-10">
+          <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
+            <Rocket className="text-white w-8 h-8" />
+          </div>
+          <h1 className="text-4xl font-black tracking-tighter bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
+            KP CLOUD
+          </h1>
+          <p className="text-slate-500 mt-2 text-sm font-medium uppercase tracking-[0.2em]">Secure Access</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm mb-1 text-slate-300">အီးမေးလ်</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-indigo-500 focus:bg-white/10 outline-none transition"
-              placeholder="example@company.com"
-            />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-400 uppercase ml-1 tracking-widest">Email Address</label>
+            <div className="relative group">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" size={18} />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:bg-white/[0.08] outline-none transition-all font-medium text-sm"
+                placeholder="name@example.com"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm mb-1 text-slate-300">စကားဝှက်</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-indigo-500 focus:bg-white/10 outline-none transition"
-              placeholder="••••••••"
-            />
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-400 uppercase ml-1 tracking-widest">Password</label>
+            <div className="relative group">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" size={18} />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:bg-white/[0.08] outline-none transition-all font-medium text-sm"
+                placeholder="••••••••"
+              />
+            </div>
           </div>
 
           {error && (
-            <div className="text-rose-400 text-sm text-center bg-rose-950/30 border border-rose-500/30 p-3 rounded-lg">
+            <div className="flex items-center gap-3 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold animate-shake">
+              <div className="w-1 h-1 rounded-full bg-rose-500" />
               {error}
             </div>
           )}
@@ -106,25 +118,27 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-lg font-medium bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-[1.02] active:scale-100 transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-4 rounded-2xl font-black bg-white text-[#020617] hover:bg-indigo-50 transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-xl shadow-white/5 group"
           >
             {loading ? (
-              <>
-                <Loader2 className="animate-spin w-5 h-5" />
-                ဝင်ရောက်နေသည်...
-              </>
+              <Loader2 className="animate-spin w-5 h-5" />
             ) : (
-              "ဝင်ရောက်မည်"
+              <>
+                SIGN IN
+                <Rocket size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </>
             )}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-400">
-          အကောင့်မရှိသေးဘူးလား?{" "}
-          <Link href="/register" className="text-indigo-400 hover:underline">
-            အကောင့်ဖွင့်ရန်
-          </Link>
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-sm text-slate-500 font-medium">
+            New here?{" "}
+            <Link href="/register" className="text-white hover:text-indigo-400 transition-colors font-bold underline underline-offset-4">
+              Create an account
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
