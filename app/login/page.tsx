@@ -1,17 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react"; // useSession ထည့်လိုက်ပါ
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // ✅ အကယ်၍ Login ဝင်ပြီးသားဆိုရင် Dashboard ကို အော်တိုပို့ပေးမယ်
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard");
+    }
+  }, [status, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,49 +30,49 @@ export default function LoginPage() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false,
+        redirect: false, // UI မှာ error ပြချင်လို့ false ထားတာ မှန်ပါတယ်
       });
 
       if (result?.error) {
         setError("အီးမေးလ် သို့မဟုတ် စကားဝှက် မမှန်ကန်ပါ");
+        setLoading(false);
         return;
       }
 
-      router.push("/dashboard");
-      router.refresh();
-    } catch {
+      if (result?.ok) {
+        // ✅ router.push က တခါတလေ cache ကြောင့် မသွားရင် window.location သုံးတာ ပိုထိရောက်ပါတယ်
+        window.location.href = "/dashboard";
+      }
+    } catch (err) {
       setError("တစ်ခုခု မမှန်ကန်ပါ။ ထပ်မံကြိုးစားပါ။");
-    } finally {
       setLoading(false);
     }
   };
 
+  // Loading ဖြစ်နေချိန်မှာ ခဏစောင့်ခိုင်းမယ်
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#070b1a]">
+        <Loader2 className="animate-spin text-indigo-500 w-10 h-10" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[#070b1a] text-white">
-
       {/* Glow background */}
       <div className="absolute w-[500px] h-[500px] bg-indigo-600/20 blur-3xl rounded-full top-[-120px] left-[-120px]" />
       <div className="absolute w-[400px] h-[400px] bg-purple-600/20 blur-3xl rounded-full bottom-[-120px] right-[-120px]" />
 
-      {/* Card */}
       <div className="relative w-full max-w-md p-8 rounded-2xl bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_0_60px_rgba(99,102,241,0.2)]">
-
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight">KP Cloud 🚀</h1>
-          <p className="text-slate-400 mt-2 text-sm">
-            သင့်အကောင့်သို့ ဝင်ရောက်ပါ
-          </p>
+          <p className="text-slate-400 mt-2 text-sm">သင့်အကောင့်သို့ ဝင်ရောက်ပါ</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
-
-          {/* Email */}
           <div>
-            <label className="block text-sm mb-1 text-slate-300">
-              အီးမေးလ်
-            </label>
+            <label className="block text-sm mb-1 text-slate-300">အီးမေးလ်</label>
             <input
               type="email"
               value={email}
@@ -75,11 +83,8 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Password */}
           <div>
-            <label className="block text-sm mb-1 text-slate-300">
-              စကားဝှက်
-            </label>
+            <label className="block text-sm mb-1 text-slate-300">စကားဝှက်</label>
             <input
               type="password"
               value={password}
@@ -90,14 +95,12 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Error */}
           {error && (
             <div className="text-rose-400 text-sm text-center bg-rose-950/30 border border-rose-500/30 p-3 rounded-lg">
               {error}
             </div>
           )}
 
-          {/* Button */}
           <button
             type="submit"
             disabled={loading}
@@ -114,7 +117,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-sm text-slate-400">
           အကောင့်မရှိသေးဘူးလား?{" "}
           <Link href="/register" className="text-indigo-400 hover:underline">
